@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -35,9 +36,18 @@ var (
 )
 
 func remoteIPMIHandler(w http.ResponseWriter, r *http.Request) {
-	target := r.URL.Query().Get("target")
+	log.Infoln("Handling ipmi request " + r.URL.EscapedPath())
+	target := ""
+	segments := []string(strings.Split(r.URL.EscapedPath(), "/"))
+	log.Infoln("Number of url segments: ", len(segments))
+	if len(segments) == 4 && segments[2] == "target" {
+		target = segments[3]
+	}
 	if target == "" {
-		http.Error(w, "'target' parameter must be specified", 400)
+		target = r.URL.Query().Get("target")
+	}
+	if target == "" {
+		http.Error(w, "'target' parameter should be specified", 400)
 		return
 	}
 
@@ -112,7 +122,7 @@ func main() {
 	prometheus.MustRegister(&localCollector)
 
 	http.Handle("/metrics", promhttp.Handler())       // Regular metrics endpoint for local IPMI metrics.
-	http.HandleFunc("/ipmi", remoteIPMIHandler)       // Endpoint to do IPMI scrapes.
+	http.HandleFunc("/ipmi/", remoteIPMIHandler)      // Endpoint to do IPMI scrapes.
 	http.HandleFunc("/-/reload", updateConfiguration) // Endpoint to reload configuration.
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
