@@ -5,6 +5,10 @@ Prometheus IPMI Exporter
 
 This is an IPMI exporter for [Prometheus](https://prometheus.io).
 
+This fork supports the `/ipmi` endpoint, with target definition as part of the path. 
+I.e. next to the `/ipmi?target=10.113.183.220` url, also supports the  `/ipmi/target/10.113.183.220`.
+The practical usecase is prometheus scraping from a K8S cluster; when using a prometheus.io/path annotation on Kubernetes resources to indicate scraping, the ?target=<target> url syntax is not supported (likely a conflict with the Prometheus 'parameter' concept. The alternative path based target does function without issues.
+
 It supports both the regular `/metrics` endpoint, exposing metrics from the
 host that the exporter is running on, as well as an `/ipmi` endpoint that
 supports IPMI over RMCP - one exporter running on one host can be used to
