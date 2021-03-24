@@ -121,7 +121,8 @@ func main() {
 	prometheus.MustRegister(&localCollector)
 
 	http.Handle("/metrics", promhttp.Handler())       // Regular metrics endpoint for local IPMI metrics.
-	http.HandleFunc("/ipmi/", remoteIPMIHandler)      // Endpoint to do IPMI scrapes.
+	http.HandleFunc("/ipmi", remoteIPMIHandler)       // Endpoint to do IPMI scrapes, ?target=<target> style.
+	http.HandleFunc("/ipmi/", remoteIPMIHandler)      // Endpoint to do IPMI scrapes, /ipmi/target/<target> style.
 	http.HandleFunc("/-/reload", updateConfiguration) // Endpoint to reload configuration.
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
