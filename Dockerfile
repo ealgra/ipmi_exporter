@@ -4,9 +4,7 @@ ADD . /go/src/github.com/ipmi_exporter/
 RUN cd /go/src/github.com/ipmi_exporter && make
 
 # Container image
-ARG ARCH="amd64"
-ARG OS="linux"
-FROM --platform=${OS}/${ARCH} alpine:3
+FROM alpine:3
 RUN apk --no-cache add freeipmi
 LABEL maintainer="The Prometheus Authors <prometheus-developers@googlegroups.com>"
 
