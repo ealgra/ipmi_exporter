@@ -57,7 +57,7 @@ var (
 )
 
 func remoteIPMIHandler(w http.ResponseWriter, r *http.Request) {
-	log.Infoln("Handling ipmi request " + r.URL.EscapedPath())
+	logger.Info("Handling ipmi request " + r.URL.EscapedPath())
 	target := ""
 	segments := []string(strings.Split(r.URL.EscapedPath(), "/"))
 	if len(segments) == 4 && segments[2] == "target" {
